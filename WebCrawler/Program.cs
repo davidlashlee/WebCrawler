@@ -14,7 +14,7 @@ namespace WebCrawler
         static void Main(string[] args)
         {
             DateTime programStartTime = DateTime.Now;
-            Opener urls = new Opener(); // Opens the supplied text file and parses each string and converts into URIs
+            UriReader urls = new UriReader(); // Opens the supplied text file and parses each string and converts into URIs
             Config configed = new Config(urls.urilist, 10); // Second Argument is where you config core count
             int i = -1;
             var threads = new List<Thread>();
@@ -35,14 +35,20 @@ namespace WebCrawler
            StreamWriter logFile = new StreamWriter("logfile.txt");
             foreach (Log logInstance in temp)
             {
+                logFile.Write("Output File Path: ");
+                logFile.WriteLine(logInstance.OutputFileName);
+                logFile.WriteLine("");
                 logFile.Write("URL: ");
                 logFile.WriteLine(logInstance.logURI);
+                logFile.WriteLine("");
                 logFile.Write("Time: ");
-                logFile.WriteLine(logInstance.elapsedTime);
+                logFile.WriteLine(logInstance.ElapsedTime);
+                logFile.WriteLine("");
                 if (logInstance.errorMessage != null)
                 {
                     logFile.Write("Error Message: ");
                     logFile.WriteLine(logInstance.errorMessage);
+                    logFile.WriteLine("");
                 }
             }
 
@@ -57,10 +63,10 @@ namespace WebCrawler
             
         }
 
-        public static async Task ThreadPass(List<Uri> testing, int listIndex) // struggled with passing a class with params into a new thread, this part of my solution
+        public static void ThreadPass(List<Uri> testing, int listIndex) // struggled with passing a class with params into a new thread, this part of my solution
         {
             Threadconfig threadInstance = new Threadconfig();
-            await threadInstance.Initialize(testing, listIndex);
+            threadInstance.Initialize(testing, listIndex);
         }
     }
 }

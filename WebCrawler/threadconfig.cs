@@ -20,7 +20,27 @@ namespace WebCrawler
             {
                 taskList.Add(DownloadSite(uriInstance, list_index));
             }
-            Task.WaitAll(taskList.ToArray());
+            try
+            {
+                Task.WaitAll(taskList.ToArray());
+            }
+            catch (AggregateException ae)
+            {
+                ae.Handle(ex =>
+                {
+                    if (ex is DivideByZeroException)
+                    {
+                        //Log the exception
+                        return true;
+                    }
+                    if (ex is IndexOutOfRangeException)
+                    {
+                        //Log the exception
+                        return true;
+                    }
+                    return false; // Unhandled exception will stop the application
+                });
+            }
         }
 
         public async Task DownloadSite(Uri passedUriInstance, int list_index)
@@ -33,9 +53,12 @@ namespace WebCrawler
                 HttpClient client = new HttpClient();
                 HttpResponseMessage html = await client.GetAsync(passedUriInstance);
                 HttpContent content = html.Content;
+                string response = html.StatusCode.ToString();
+                logInstance.ResponseCode = response;
                 string result = await content.ReadAsStringAsync();
                 fileNum++;
                 string filePath = string.Format("Output/outputfile#{0}", fileNum);
+                logInstance.SaveOutputPath(filePath);
                 StreamWriter file = new StreamWriter(filePath);
                 file.Write(result);
                 file.Close();

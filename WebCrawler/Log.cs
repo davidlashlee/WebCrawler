@@ -8,21 +8,23 @@ namespace WebCrawler
 {
     class Log
     {
-        public DateTime startTime;
+        public DateTime StartTime { get; set;  }
         public String errorMessage;
         public Uri logURI;
-        public TimeSpan elapsedTime;
+        public TimeSpan ElapsedTime { get; set; }
+        public string OutputFileName {get; set; }
+        public string ResponseCode { get; set; }
 
         public void TimeStart()
         {
-            DateTime startTime = DateTime.Now;
+            StartTime = DateTime.Now;
         } 
 
         public TimeSpan TimeStop()
         {
             DateTime stopTime = DateTime.Now;
-            TimeSpan elapsedTime = stopTime - startTime;
-            return elapsedTime;
+            ElapsedTime = stopTime - StartTime;
+            return ElapsedTime;
         }
 
         public void SaveError(string error_text)
@@ -35,6 +37,14 @@ namespace WebCrawler
             logURI = uriInstance;
         }
 
+        public void SaveOutputPath(string fileName)
+        {
+            OutputFileName = fileName;
+        }
 
+        public void httpResponseCode(string code)
+        {
+            ResponseCode = code;
+        }
     }
 }

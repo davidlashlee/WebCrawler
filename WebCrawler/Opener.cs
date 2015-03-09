@@ -7,12 +7,12 @@ using System.IO;
 
 namespace WebCrawler
 {
-    class Opener
+    class UriReader
     {
         public List<string> stringlist = new List<string>(); // gives access to string version of the URL list
         public List<Uri> urilist = new List<Uri>(); // give access to URI version of the URL list
 
-        public Opener()
+        public UriReader()
         {
             string line;
             StreamReader file = new StreamReader("c:\\users\\david lashlee\\documents\\visual studio 2013\\Projects\\WebCrawler\\WebCrawler\\Properties\\testurls.txt");
