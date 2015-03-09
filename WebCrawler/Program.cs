@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.IO;
+using System.Net.Http;
 
 namespace WebCrawler
 {
@@ -16,13 +17,19 @@ namespace WebCrawler
             Opener urls = new Opener(); // Opens the supplied text file and parses each string and converts into URIs
             Config configed = new Config(urls.urilist, 10); // Second Argument is where you config core count
             int i = -1;
+            var threads = new List<Thread>();
            foreach (List<Uri> splitUriListInstance in configed.parsedData) // Splits up the work load and spins up the threads
            {
+
                i++;
                Thread th = new Thread(() => ThreadPass(splitUriListInstance, i)); // sackoverflow code, using a lamda to call a method with arguments, http://stackoverflow.com/questions/3360555/how-to-pass-parameters-to-threadstart-method-in-thread
+               threads.Add(th);
                th.Start();
            }
-           Thread.Sleep(15000);
+           foreach (Thread threadInstance in threads)
+           {
+               threadInstance.Join();
+           }
            List<Log> temp = Threadconfig.LogGroup;
            Console.WriteLine(temp.Count);
            StreamWriter logFile = new StreamWriter("logfile.txt");
@@ -38,6 +45,7 @@ namespace WebCrawler
                     logFile.WriteLine(logInstance.errorMessage);
                 }
             }
+
             DateTime programStopTime = DateTime.Now;
             TimeSpan programEllapsedTime = programStopTime - programStartTime;
             logFile.Write("Total Time: ");
@@ -49,10 +57,10 @@ namespace WebCrawler
             
         }
 
-        public static void ThreadPass(List<Uri> testing, int listIndex) // struggled with passing a class with params into a new thread, this part of my solution
+        public static async Task ThreadPass(List<Uri> testing, int listIndex) // struggled with passing a class with params into a new thread, this part of my solution
         {
             Threadconfig threadInstance = new Threadconfig();
-            threadInstance.Initialize(testing, listIndex);
+            await threadInstance.Initialize(testing, listIndex);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,18 +11,19 @@ namespace WebCrawler
     class Threadconfig
     {
         private static int fileNum = 0;
-        public static List<Task> threadList = new List<Task>();
+        public static List<Task> taskList = new List<Task>();
         private static List<Log> _logGroup = new List<Log>();
         public static List<Log> LogGroup { get { return _logGroup; } }
-        public async void Initialize(List<Uri> passed_uri_list, int list_index)
+        public void Initialize(List<Uri> passed_uri_list, int list_index)
         {
             foreach (Uri uriInstance in passed_uri_list)
             {
-                Task t = new Task(DownloadSite(uriInstance, list_index));
+                taskList.Add(DownloadSite(uriInstance, list_index));
             }
+            Task.WaitAll(taskList.ToArray());
         }
 
-        public async void DownloadSite(Uri passedUriInstance, int list_index)
+        public async Task DownloadSite(Uri passedUriInstance, int list_index)
         {
             Log logInstance = new Log();
             try
@@ -46,6 +47,7 @@ namespace WebCrawler
             }
             logInstance.TimeStop();
             _logGroup.Add(logInstance);
+            return;
         }
     }
 }
