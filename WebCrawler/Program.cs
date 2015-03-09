@@ -22,7 +22,7 @@ namespace WebCrawler
                Thread th = new Thread(() => ThreadPass(splitUriListInstance, i)); // sackoverflow code, using a lamda to call a method with arguments, http://stackoverflow.com/questions/3360555/how-to-pass-parameters-to-threadstart-method-in-thread
                th.Start();
            }
-           Task.WaitAll(Threadconfig.taskList.ToArray());
+           Thread.Sleep(15000);
            List<Log> temp = Threadconfig.LogGroup;
            Console.WriteLine(temp.Count);
            StreamWriter logFile = new StreamWriter("logfile.txt");
@@ -52,7 +52,7 @@ namespace WebCrawler
         public static void ThreadPass(List<Uri> testing, int listIndex) // struggled with passing a class with params into a new thread, this part of my solution
         {
             Threadconfig threadInstance = new Threadconfig();
-            Task t = new Task(threadInstance.Initialize(testing, listIndex));
+            threadInstance.Initialize(testing, listIndex);
         }
     }
 }
